@@ -1,118 +1,78 @@
-import {
-  addItemToList,
-  addUser,
-  getWeekDays,
-  makeAdminUser,
-  getUserInfo,
-} from "../utils/matchers";
+import { asyncAdd, fetchUserFail, fetchUserOK } from "../utils/async";
 
 /**
  * Write the assertions using the most appropriate matcher
  */
-describe("05-exercises", () => {
-  test("addItemToList adds a new item to the initial array immutably", () => {
+describe("06-exercises", () => {
+  /**
+   * Finish the test so that it checks if the result of calling the
+   * `asyncAdd` function with:
+   * - the number 5 as the first argument,
+   * - the number 5 as the second,
+   * - the `callback` function as the third,
+   *
+   * executes the assertion inside the `callback` function.
+   *
+   * The `asyncAdd` will execute asynchronously (not with promises)
+   * which means that you need to fix the test so that it waits for
+   * the function to finish so that the assertion is made.
+   *
+   * @tip
+   * done callback
+   */
+  test("asyncAdd returns the sum of the numbers", (done) => {
     expect.assertions(1);
 
-    const prevList = [1, 2, 3, 4];
-    const newItem = 5;
+    asyncAdd(5, 5, callback);
 
-    /**
-     * Test that the addItemToList function adds the `newItem` variable to the
-     * `prevList` array and returns an array that contains the previous elements
-     * and the new item.
-     *
-     * The function receives as arguments the previous array and the new item
-     */
-
-    // Write the assertion
-    expect(addItemToList(prevList, newItem)).toContain(newItem);
+    // Finish the test
+    function callback(result) {
+      expect(result).toBe(10);
+      done();
+    }
   });
 
-  test("addUser adds a new user to the list of users", () => {
+  /**
+   * Finish the test so that it checks if the result of calling
+   * the `fetchUserOK` function with the `userID` variable
+   * as the first argument, returns a resolved Promise
+   * with an object that has the same data as the `expectedUser` variable
+   *
+   * The `fetchUserOK` function will return a promise which means that you
+   * need to wait for the promise and the result to check if the resolved
+   * data is equal to the `expectedUser` variable.
+   */
+  test("fetchUserOK resolves the user data", () => {
+    const userID = 5;
+    const expectedUser = { id: userID, name: "Alex" };
+
     expect.assertions(1);
 
-    const users = [{ name: "dani" }, { name: "ana" }, { name: "andrew" }];
-    const expectedUser = { name: "maria" };
-
-    /**
-     * Test that the addUser function returns an array of objects
-     * The function is called with the `users` array as the first argument
-     * and the string "maria" as the second.
-     *
-     * You need to test that the functions returns an array that contains
-     * an object equal to the one in the `expectedUser` variable
-     *
-     * @tip
-     * you need to use an array matcher that can check objects
-     */
-
-    // Write the assertion
-    expect(addUser(users, "maria")).toContainEqual(expectedUser);
+    // Finish the test
+    return fetchUserOK(userID).then((data) => {
+      expect(data).toEqual(expectedUser);
+    });
   });
 
-  test("getWeekDays returns an array of week days", () => {
+  /**
+   * Finish the test so that it checks if the result of calling
+   * the `fetchUserFail` function with the `userID` variable
+   * as the first argument, returns a rejected Promise with
+   * a string as a message that has the same value as
+   * the `expectedMessage` variable
+   *
+   * The `fetchUserFail` function will return a promise
+   * which means that you need to wait for the promise and
+   * the result to check if the rejected message is the same
+   * as the `expectedMessage` variable.
+   */
+  test("fetchUserFail rejects with an error message", () => {
+    const userID = 5;
+    const expectedMessage = `User ${userID} not found`;
+
     expect.assertions(1);
 
-    const expectedDays = ["Monday", "Tuesday"];
-
-    /**
-     * Write an assertion that executing the getWeekDays function
-     * returns an array of week days.
-     *
-     * You should check that the returned value matches the sub array
-     * in the `expectedDays` variable
-     */
-
-    // Write the assertion
-    expect(getWeekDays()).toEqual(expect.arrayContaining(expectedDays));
-  });
-
-  test("makeAdminUser returns an object with the role property", () => {
-    expect.assertions(1);
-
-    const user = { name: "dani" };
-    const expectedProperty = { role: "ADMIN" };
-
-    /**
-     * Write an assertion that executing the makeAdminUser function
-     * returns an object with a property of role.
-     *
-     * The function receives an object as an argument, therefore you should call it
-     * with the `user` variable as an argument.
-     *
-     * You should check that the returned object sub-matches an object with
-     * the properties of the `expectedProperty` variable
-     */
-
-    // Write the assertion
-    expect(makeAdminUser(user)).toEqual(
-      expect.objectContaining(expectedProperty)
-    );
-  });
-
-  test("getUserInfo returns an object without the address properties", () => {
-    expect.assertions(1);
-
-    const userAddress = {
-      postalCode: "08001",
-      city: "Barcelona",
-      streetName: "Sert 1",
-    };
-
-    const user = { name: "dani", ...userAddress };
-
-    /**
-     * Write an assertion that executing the getUserInfo function returns
-     * an object without the properties in the `userAddress` variable
-     *
-     * The function receives an object as an argument, therefore you should call it
-     * with the `user` variable as an argument.
-     *
-     * You should check that the returned object doesn't sub-match an object with
-     * the properties of the `userAddress` variable
-     */
-
-    // Write the assertion
-    expect(getUserInfo(user)).not.toEqual(expect.objectContaining(userAddress));
+    // Finish the test
+    return expect(fetchUserFail(userID)).rejects.toBe(expectedMessage);
   });
 });
